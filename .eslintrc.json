@@ -1,0 +1,12 @@
+{
+    "extends": "standard-with-typescript",
+    "rules": {
+        "no-redeclare": "off"
+    },
+    "plugins": [
+        "@typescript-eslint/tslint"
+    ],
+    "parserOptions": {
+        "project": "./tsconfig.json"
+    }
+}
