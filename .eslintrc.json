@@ -1,12 +1,13 @@
 {
     "extends": "standard-with-typescript",
     "rules": {
-        "no-redeclare": "off",
-        "comma-spacing": "off"
+        "@typescript-eslint/no-redeclare": "off",
+        "comma-spacing": "off",
+        "@typescript-eslint/strict-boolean-expressions": "off"
     },
-    "plugins": [
-        "@typescript-eslint/tslint"
-    ],
+    // "plugins": [
+    //     "@typescript-eslint/tslint"
+    // ],
     "parserOptions": {
         "project": "./tsconfig.json"
     }
