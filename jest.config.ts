@@ -8,9 +8,9 @@ export default {
     '!**/protocols/**',
     '!**/test/**'
   ],
-  coverageDirectory: "coverage",
-  coverageProvider: "v8",
+  coverageDirectory: 'coverage',
+  coverageProvider: 'v8',
   transform: {
     '.+\\.ts$': 'ts-jest'
-  },
-};
+  }
+}
