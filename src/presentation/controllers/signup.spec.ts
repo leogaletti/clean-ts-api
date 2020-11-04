@@ -8,6 +8,16 @@ interface SutTypes {
   emailValidatorStub: EmailValidator
 }
 
+/*
+
+Todos os testes dependem desse mock.
+Se criar o validador de email como false, todos os outros testes irão falhar porque irá
+cair na validação do e-mail.
+Pra que isso não aconteça, colocamos sempre como true e no teste específico onde
+precisamos que seja outro valor, utilizamos o jest para ficar espionando o método
+e alterar o retorno do seu valor.
+
+ */
 const makeSut = (): SutTypes => {
   class EmailValidatorStub implements EmailValidator {
     isValid (email: string): boolean {
@@ -95,5 +105,20 @@ describe('SignUp Controller', () => {
     const httpResponse = sut.handle(httpRequest)
     expect(httpResponse.statusCode).toBe(400)
     expect(httpResponse.body).toEqual(new InvalidParamError('email'))
+  })
+
+  test('Should call EmailValidator with correct email', () => {
+    const { sut, emailValidatorStub } = makeSut()
+    const isValidSpy = jest.spyOn(emailValidatorStub, 'isValid')
+    const httpRequest = {
+      body: {
+        name: 'any_name',
+        email: 'any_email@mail.com',
+        password: 'any_password',
+        passwordConfirmation: 'any_password'
+      }
+    }
+    sut.handle(httpRequest)
+    expect(isValidSpy).toHaveBeenCalledWith('any_email@mail.com')
   })
 })
