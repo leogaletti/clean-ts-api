@@ -1,7 +1,8 @@
 {
     "extends": "standard-with-typescript",
     "rules": {
-        "no-redeclare": "off"
+        "no-redeclare": "off",
+        "comma-spacing": "off"
     },
     "plugins": [
         "@typescript-eslint/tslint"
