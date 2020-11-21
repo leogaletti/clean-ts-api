@@ -1,6 +1,6 @@
 import { SignUpController } from './signup'
 import { MissingParamError, InvalidParamError, ServerError } from '../../errors'
-import { EmailValidator, AddAcount, AddAcountModel, AccountModel } from '../../controllers/signup/signup-protocols'
+import { EmailValidator, AddAcount, AddAcountModel, AccountModel, Validation } from '../../controllers/signup/signup-protocols'
 import { HttpRequest } from '../../protocols'
 import { ok, serverError, badRequest } from '../../helpers/http-helper'
 
@@ -31,6 +31,15 @@ const makeAddAcount = (): AddAcount => {
   return new AddAcountStub()
 }
 
+const makeValidation = (): Validation => {
+  class ValidationStub implements Validation {
+    validate (input: any): Error {
+      return null
+    }
+  }
+  return new ValidationStub()
+}
+
 const makeFakeRequest = (): HttpRequest => ({
   body: {
     name: 'any_name',
@@ -46,21 +55,23 @@ const makeFakeAccount = (): AccountModel => ({
   email: 'valid_email@mail.com',
   password: 'valid_password'
 })
-
 interface SutTypes {
   sut: SignUpController
   emailValidatorStub: EmailValidator
   addAcountStub: AddAcount
+  validationStub: Validation
 }
 
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const addAcountStub = makeAddAcount()
-  const sut = new SignUpController(emailValidatorStub, addAcountStub)
+  const validationStub = makeValidation()
+  const sut = new SignUpController(emailValidatorStub, addAcountStub, validationStub)
   return {
     sut,
     emailValidatorStub,
-    addAcountStub
+    addAcountStub,
+    validationStub
   }
 }
 
@@ -181,5 +192,13 @@ describe('SignUp Controller', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeAccount()))
+  })
+
+  test('Should call Validation with correct values', async () => {
+    const { sut, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validateSpy).toHaveBeenCalledWith(httpRequest.body)
   })
 })
